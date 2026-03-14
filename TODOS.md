@@ -59,3 +59,23 @@ _Created: 2026-03-14 (Plan Review)_
 - **Why:** Reuses proven diff pattern from SNP-Onboard. Helps customer understand what their choices mean.
 - **Effort:** S (~30 min — reuse getBuildDifferences pattern)
 - **Status:** Deferred
+
+---
+
+## P2 — Added by Eng Review
+
+### TODO-8: Sanitization Audit Checklist / Script
+- **What:** Create a pre-demo grep script that checks all source files for leaked internal details: vendor P/Ns (VSC8504, Virtium, Microchip), customer names (ABE, J2, JL, FMS), internal doc numbers (SNP-HW-*, SNP-ICD-*).
+- **Why:** The two-tier sanitization rule is a convention, not an automated check. When someone adds a module 3 months from now, they could accidentally include a vendor P/N.
+- **Approach:** Shell script `scripts/sanitization-check.sh` that greps src/ for a blocklist of terms. Exit 1 if any found.
+- **Effort:** S (15 min)
+- **Depends on:** Data layer (product-catalog.ts, module-specs.ts) must exist first
+- **Status:** Deferred
+
+### TODO-9: Mobile/Tablet Responsiveness for Chassis Configurator
+- **What:** Make the interactive chassis SVG and slot panels work on tablet-sized screens (iPad, Surface). Touch-friendly click targets, bottom sheet for slot panel on narrow screens.
+- **Why:** Sales engineers may demo on tablets during in-person customer meetings.
+- **Approach:** Slot panel becomes a bottom sheet on screens < 768px. SVG viewBox scales naturally but may need larger touch targets or a "tap slot number" overlay.
+- **Effort:** M (1-2 hours)
+- **Depends on:** Interactive chassis must exist first
+- **Status:** Deferred

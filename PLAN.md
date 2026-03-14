@@ -245,6 +245,12 @@ public/
 | Scope mode | EXPANSION | Greenfield customer-facing tool, should impress |
 | Reset to Baseline | Build in initial release | ~10 min, essential UX |
 | Error boundary | Build in initial release | Prevents white-screen crashes |
+| Faceplate rendering | Type-based mapping (not ID-based) | Prevents silent failures when modules change |
+| ConfigProvider scope | Root layout.tsx | Simplest, most flexible, one file |
+| Slot constraints | Data-driven in product-catalog.ts | DRY — one source of truth, reducer validates against catalog |
+| Mock AI responses | Fresh 3-4 generic responses | Don't fork internal fault codes — sanitization risk |
+| Module specs sanitization | Two-tier: keep public families, remove vendor P/Ns | ARM Cortex stays, Microchip VSC8504 goes, no datasheets |
+| Test scope | 3 focused test files (~25-30 tests) | Test net-new logic, not forked code |
 
 ---
 
