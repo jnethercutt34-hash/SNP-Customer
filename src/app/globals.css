@@ -119,6 +119,28 @@
   --ring: hsl(217 91% 60%);
 }
 
+/* Light theme */
+.light {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(222 47% 11%);
+  --card: hsl(0 0% 98%);
+  --card-foreground: hsl(222 47% 11%);
+  --popover: hsl(0 0% 98%);
+  --popover-foreground: hsl(222 47% 11%);
+  --primary: hsl(217 91% 50%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(220 14% 92%);
+  --secondary-foreground: hsl(222 47% 11%);
+  --muted: hsl(220 14% 92%);
+  --muted-foreground: hsl(215 16% 47%);
+  --accent: hsl(262 80% 55%);
+  --accent-foreground: hsl(0 0% 100%);
+  --destructive: hsl(0 84% 60%);
+  --border: hsl(220 13% 85%);
+  --input: hsl(220 13% 85%);
+  --ring: hsl(217 91% 50%);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -138,11 +160,82 @@
 
 /* Print styles for configuration summary */
 @media print {
-  body {
+  /* Reset to white background for printing */
+  :root {
+    --background: hsl(0 0% 100%);
+    --foreground: hsl(0 0% 5%);
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(0 0% 5%);
+    --muted-foreground: hsl(0 0% 35%);
+    --border: hsl(0 0% 80%);
+    --primary: hsl(217 91% 40%);
+    --accent: hsl(262 80% 45%);
+    --secondary: hsl(0 0% 95%);
+  }
+
+  html, body {
     background: white !important;
     color: black !important;
+    font-size: 11pt !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
-  .no-print {
+
+  /* Hide non-printable elements */
+  .no-print,
+  header,
+  nav {
     display: none !important;
+  }
+
+  /* Show print-only elements */
+  .print-only {
+    display: block !important;
+  }
+
+  /* Remove shadows and round corners for cleaner print */
+  [data-slot="card"] {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Ensure badges are readable in print */
+  [data-slot="badge"] {
+    border: 1px solid #999 !important;
+    background: #f0f0f0 !important;
+    color: #333 !important;
+  }
+
+  /* Force visible text colors */
+  .text-primary { color: #1d4ed8 !important; }
+  .text-accent { color: #7c3aed !important; }
+  .text-muted-foreground { color: #555 !important; }
+  .text-foreground { color: #111 !important; }
+  .text-green-400 { color: #16a34a !important; }
+
+  /* Borders for slot breakdown */
+  .rounded-lg.border {
+    border: 1px solid #ccc !important;
+  }
+
+  /* Interface tags */
+  .font-mono.text-primary\/80 {
+    border: 1px solid #93c5fd !important;
+    background: #eff6ff !important;
+    color: #1d4ed8 !important;
+  }
+
+  /* Page margins */
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+
+  /* Prevent breaks in slot cards */
+  .space-y-4 > div {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 }

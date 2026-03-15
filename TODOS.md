@@ -1,81 +1,71 @@
 # SNP-Customer — TODOS
-_Created: 2026-03-14 (Plan Review)_
+_Created: 2026-03-14 (Plan Review) · Updated: 2026-03-15_
 
 ---
 
 ## P1 — Must Have
 
-### TODO-1: PDF/Print Export for Configuration Summary
+### TODO-1: PDF/Print Export for Configuration Summary ✅
 - **What:** Add "Download PDF" / "Print" button on /configure/summary
 - **Why:** Customers need to share configs with their team / procurement
-- **Approach:** Start with print-optimized CSS (`@media print`). Consider `@react-pdf/renderer` for branded PDFs in Phase 2.
-- **Effort:** M (2-3 hours for print CSS, 4-5 hours for @react-pdf)
-- **Depends on:** Configurator + summary page must exist first
-- **Status:** Deferred to after core build
+- **Approach:** Print-optimized CSS (`@media print`) with white background, readable colors, page breaks, branded print header with date/stats.
+- **Status:** ✅ Complete — full print CSS with A4 layout, branded header, `no-print` class system
 
-### TODO-2: SESSION-CONTEXT.md
-- **What:** Write comprehensive session context document (like SNP-Onboard has)
+### TODO-2: SESSION-CONTEXT.md ✅
+- **What:** Write comprehensive session context document
 - **Why:** Enables future agent sessions and human engineers to onboard quickly
-- **Effort:** S (30 min at end of first build session)
-- **Depends on:** Core build must be complete first
-- **Status:** Deferred to end of first build session
+- **Status:** ✅ Complete — 12-section document covering architecture, data flow, sanitization rules, routes
 
 ---
 
 ## P2 — Should Have
 
-### TODO-3: Config URL Sharing
-- **What:** Encode configuration in URL hash (base64 JSON) for shareable links
+### TODO-3: Config URL Sharing ✅
+- **What:** Encode configuration in URL query param (base64 JSON) for shareable links
 - **Why:** Sales engineer configures with customer, sends link. Customer opens on own machine.
-- **Approach:** Base64-encoded JSON of slot config (~200 chars). Decode on page load, merge into context.
-- **Effort:** S (1-2 hours)
-- **Depends on:** Config context must be stable
-- **Status:** Deferred
+- **Approach:** Compact representation (only configurable choices: s2, s3, m4, m6). Base64-encoded. Decoded on page load with validation. URL cleaned after hydration.
+- **Status:** ✅ Complete — `encodeConfigToUrl()`, URL hydration in ConfigProvider, "Share Configuration Link" button on summary page
 
 ---
 
 ## P3 — Delight / Vision
 
-### TODO-4: Animated SWaP-C Gauges
+### TODO-4: Animated SWaP-C Gauges ✅
 - **What:** CSS transitions on power/weight gauge bars when config changes. Number count-up animation.
 - **Why:** Makes config changes feel impactful — "I can feel the tradeoff"
-- **Effort:** S (~30 min — CSS transitions + useEffect counter)
-- **Status:** Deferred
+- **Approach:** Custom `useAnimatedValue` hook with ease-out cubic easing. 400ms duration. `tabular-nums` for stable layout during animation.
+- **Status:** ✅ Complete
 
-### TODO-5: "What Changes?" Diff Tooltip
-- **What:** Hover over a module option in slot panel → tooltip shows delta vs current selection (+3W, +15g, adds 4× 10GBase-T)
+### TODO-5: "What Changes?" Diff Tooltip ✅
+- **What:** Module option cards in slot panel show delta vs current selection (+3W, +15g)
 - **Why:** Instant tradeoff visibility without select-and-compare mental math
-- **Effort:** S (~30 min)
-- **Status:** Deferred
+- **Approach:** Compute powerDelta/weightDelta in SlotPanel, pass to ModuleCard. Green for savings, amber for increases.
+- **Status:** ✅ Complete — shows delta on every non-selected option card
 
-### TODO-6: Dark/Light Mode Toggle
+### TODO-6: Dark/Light Mode Toggle ✅
 - **What:** Navbar toggle for light theme. Define light CSS variables.
 - **Why:** Useful for projector presentations and printing
-- **Effort:** M (~1-2 hours)
-- **Status:** Deferred
+- **Approach:** `.light` CSS class with full variable override. Toggle in navbar with localStorage persistence. Sun/moon icons.
+- **Status:** ✅ Complete
 
-### TODO-7: Configuration Comparison vs Baseline
-- **What:** "Compare with Baseline" button on summary page. Side-by-side diff: changes, power/weight delta, interfaces gained/lost.
-- **Why:** Reuses proven diff pattern from SNP-Onboard. Helps customer understand what their choices mean.
-- **Effort:** S (~30 min — reuse getBuildDifferences pattern)
-- **Status:** Deferred
+### TODO-7: Configuration Comparison vs Baseline ✅
+- **What:** "Compare with Baseline" section on summary page. Diff: changes, power/weight delta, interfaces gained/lost.
+- **Why:** Helps customer understand what their choices mean vs the reference build.
+- **Approach:** BaselineComparison component compares current slots against BASELINE_CONFIG. Shows power/weight deltas and slot-level change list with from→to.
+- **Status:** ✅ Complete — auto-shows on summary, expandable details
 
 ---
 
 ## P2 — Added by Eng Review
 
-### TODO-8: Sanitization Audit Checklist / Script
-- **What:** Create a pre-demo grep script that checks all source files for leaked internal details: vendor P/Ns (VSC8504, Virtium, Microchip), customer names (ABE, J2, JL, FMS), internal doc numbers (SNP-HW-*, SNP-ICD-*).
-- **Why:** The two-tier sanitization rule is a convention, not an automated check. When someone adds a module 3 months from now, they could accidentally include a vendor P/N.
-- **Approach:** Shell script `scripts/sanitization-check.sh` that greps src/ for a blocklist of terms. Exit 1 if any found.
-- **Effort:** S (15 min)
-- **Depends on:** Data layer (product-catalog.ts, module-specs.ts) must exist first
-- **Status:** Deferred
+### TODO-8: Sanitization Audit Checklist / Script ✅
+- **What:** Pre-demo script that checks all source files for leaked internal details.
+- **Why:** Prevents accidental vendor P/N or customer name leaks.
+- **Approach:** `scripts/sanitization-check.sh` (bash) and `scripts/sanitization-check.bat` (Windows). Checks: vendor P/Ns, customer build IDs, internal doc numbers, fault codes, GDMS references.
+- **Status:** ✅ Complete — passes clean on current codebase
 
-### TODO-9: Mobile/Tablet Responsiveness for Chassis Configurator
-- **What:** Make the interactive chassis SVG and slot panels work on tablet-sized screens (iPad, Surface). Touch-friendly click targets, bottom sheet for slot panel on narrow screens.
-- **Why:** Sales engineers may demo on tablets during in-person customer meetings.
-- **Approach:** Slot panel becomes a bottom sheet on screens < 768px. SVG viewBox scales naturally but may need larger touch targets or a "tap slot number" overlay.
-- **Effort:** M (1-2 hours)
-- **Depends on:** Interactive chassis must exist first
-- **Status:** Deferred
+### TODO-9: Mobile/Tablet Responsiveness for Chassis Configurator ✅
+- **What:** Make slot panels work on tablet/mobile. Touch-friendly.
+- **Why:** Sales engineers demo on tablets during in-person meetings.
+- **Approach:** Slot panel → bottom sheet on screens < 768px (md breakpoint). Drag handle indicator. Rounded top corners. 85vh max height. SVG viewBox scales naturally. Touch-specific instruction text.
+- **Status:** ✅ Complete

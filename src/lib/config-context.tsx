@@ -128,6 +128,69 @@ function saveToStorage(state: ConfigState): void {
   }
 }
 
+// ─── URL Sharing ────────────────────────────────────────────────────────────
+
+/** Compact representation for URL encoding — only stores configurable choices */
+interface CompactConfig {
+  s2: string | null;  // slot 2 module
+  s3: string | null;  // slot 3 module
+  m4: string | null;  // slot 4 mezzanine
+  m6: string | null;  // slot 6 mezzanine
+}
+
+function toCompact(slots: SlotConfig[]): CompactConfig {
+  const s2 = slots.find((s) => s.slotNumber === 2);
+  const s3 = slots.find((s) => s.slotNumber === 3);
+  const s4 = slots.find((s) => s.slotNumber === 4);
+  const s6 = slots.find((s) => s.slotNumber === 6);
+  return {
+    s2: s2?.moduleId ?? null,
+    s3: s3?.moduleId ?? null,
+    m4: s4?.mezzanineId ?? null,
+    m6: s6?.mezzanineId ?? null,
+  };
+}
+
+function fromCompact(compact: CompactConfig): SlotConfig[] {
+  return [
+    { slotNumber: 1, moduleId: "psu-red" },
+    { slotNumber: 2, moduleId: compact.s2 },
+    { slotNumber: 3, moduleId: compact.s3 },
+    { slotNumber: 4, moduleId: "gpp-red", mezzanineId: compact.m4 },
+    { slotNumber: 5, moduleId: "crypto-unit" },
+    { slotNumber: 6, moduleId: "gpp-black", mezzanineId: compact.m6 },
+    { slotNumber: 7, moduleId: "psu-black" },
+  ];
+}
+
+export function encodeConfigToUrl(slots: SlotConfig[]): string {
+  const compact = toCompact(slots);
+  const json = JSON.stringify(compact);
+  const encoded = btoa(json);
+  return `${window.location.origin}/configure?config=${encoded}`;
+}
+
+function decodeConfigFromUrl(): SlotConfig[] | null {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const encoded = params.get("config");
+    if (!encoded) return null;
+
+    const json = atob(encoded);
+    const compact = JSON.parse(json) as CompactConfig;
+
+    // Validate module IDs exist
+    if (compact.s2 !== null && !MODULES[compact.s2]) return null;
+    if (compact.s3 !== null && !MODULES[compact.s3]) return null;
+    if (compact.m4 !== null && !MODULES[compact.m4]) return null;
+    if (compact.m6 !== null && !MODULES[compact.m6]) return null;
+
+    return fromCompact(compact);
+  } catch {
+    return null;
+  }
+}
+
 // ─── Context ────────────────────────────────────────────────────────────────
 
 const ConfigContext = createContext<ConfigContextValue | null>(null);
@@ -135,8 +198,16 @@ const ConfigContext = createContext<ConfigContextValue | null>(null);
 export function ConfigProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(configReducer, { slots: [...BASELINE_CONFIG] });
 
-  // Hydrate from localStorage on mount
+  // Hydrate: URL config takes priority, then localStorage
   useEffect(() => {
+    const urlConfig = decodeConfigFromUrl();
+    if (urlConfig) {
+      dispatch({ type: "SET_FULL_CONFIG", config: urlConfig });
+      // Clean URL without reload
+      window.history.replaceState({}, "", window.location.pathname);
+      return;
+    }
+
     const stored = loadFromStorage();
     if (stored) {
       dispatch({ type: "SET_FULL_CONFIG", config: stored.slots });

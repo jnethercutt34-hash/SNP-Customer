@@ -59,7 +59,9 @@ export default function ConfigurePage() {
           </div>
         </div>
         <p className="text-xs text-muted-foreground mb-3">
-          Click any slot to view details or change modules. Blue indicators mark configurable slots.
+          <span className="hidden md:inline">Click any slot to view details or change modules.</span>
+          <span className="md:hidden">Tap any slot to view details or change modules.</span>
+          {" "}Blue indicators mark configurable slots.
         </p>
         <InteractiveChassis onSlotClick={setSelectedSlot} />
       </div>

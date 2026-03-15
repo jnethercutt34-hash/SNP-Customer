@@ -40,7 +40,13 @@ export function SlotPanel({ slotNumber, onClose }: SlotPanelProps) {
   }
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-card border-l border-border shadow-2xl overflow-y-auto">
+    <div className="fixed z-50 bg-card shadow-2xl overflow-y-auto
+      inset-x-0 bottom-0 max-h-[85vh] rounded-t-2xl border-t border-border
+      md:inset-y-0 md:inset-x-auto md:right-0 md:w-full md:max-w-md md:max-h-none md:rounded-none md:border-t-0 md:border-l">
+      {/* Drag handle for mobile */}
+      <div className="flex justify-center pt-2 pb-0 md:hidden">
+        <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+      </div>
       {/* Header */}
       <div className="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-border px-5 py-4 flex items-center justify-between">
         <div>
@@ -74,6 +80,9 @@ export function SlotPanel({ slotNumber, onClose }: SlotPanelProps) {
             {constraint.allowedModuleIds?.map((modId) => {
               const mod = MODULES[modId];
               if (!mod) return null;
+              const currentMod = slotConfig.moduleId ? MODULES[slotConfig.moduleId] : null;
+              const powerDelta = mod.powerWatts - (currentMod?.powerWatts ?? 0);
+              const weightDelta = mod.weightGrams - (currentMod?.weightGrams ?? 0);
               return (
                 <ModuleCard
                   key={modId}
@@ -83,6 +92,8 @@ export function SlotPanel({ slotNumber, onClose }: SlotPanelProps) {
                   weight={mod.weightGrams}
                   interfaces={mod.interfaces}
                   isSelected={slotConfig.moduleId === modId}
+                  powerDelta={slotConfig.moduleId !== modId ? powerDelta : undefined}
+                  weightDelta={slotConfig.moduleId !== modId ? weightDelta : undefined}
                   onSelect={() =>
                     dispatch({ type: "SET_SLOT_MODULE", slotNumber, moduleId: modId })
                   }
@@ -100,6 +111,9 @@ export function SlotPanel({ slotNumber, onClose }: SlotPanelProps) {
             {constraint.allowedMezzanineIds?.map((mezId) => {
               const mez = MODULES[mezId];
               if (!mez) return null;
+              const currentMez = slotConfig.mezzanineId ? MODULES[slotConfig.mezzanineId] : null;
+              const powerDelta = mez.powerWatts - (currentMez?.powerWatts ?? 0);
+              const weightDelta = mez.weightGrams - (currentMez?.weightGrams ?? 0);
               return (
                 <ModuleCard
                   key={mezId}
@@ -110,6 +124,8 @@ export function SlotPanel({ slotNumber, onClose }: SlotPanelProps) {
                   interfaces={mez.interfaces}
                   specs={mez.keySpecs}
                   isSelected={slotConfig.mezzanineId === mezId}
+                  powerDelta={slotConfig.mezzanineId !== mezId ? powerDelta : undefined}
+                  weightDelta={slotConfig.mezzanineId !== mezId ? weightDelta : undefined}
                   onSelect={() =>
                     dispatch({ type: "SET_SLOT_MEZZANINE", slotNumber, mezzanineId: mezId })
                   }
@@ -133,6 +149,8 @@ function ModuleCard({
   interfaces,
   specs,
   isSelected,
+  powerDelta,
+  weightDelta,
   onSelect,
 }: {
   label: string;
@@ -142,6 +160,8 @@ function ModuleCard({
   interfaces?: string[];
   specs?: { label: string; value: string }[];
   isSelected: boolean;
+  powerDelta?: number;
+  weightDelta?: number;
   onSelect: () => void;
 }) {
   return (
@@ -176,6 +196,21 @@ function ModuleCard({
             <div>
               <span className="text-[10px] text-muted-foreground uppercase tracking-widest">Weight</span>
               <p className="text-xs font-semibold text-accent font-mono">{weight} g</p>
+            </div>
+          )}
+          {/* Delta indicators */}
+          {(powerDelta !== undefined && powerDelta !== 0 || weightDelta !== undefined && weightDelta !== 0) && (
+            <div className="ml-auto flex gap-3 items-center">
+              {powerDelta !== undefined && powerDelta !== 0 && (
+                <span className={`text-xs font-mono font-semibold ${powerDelta > 0 ? "text-amber-400" : "text-emerald-400"}`}>
+                  {powerDelta > 0 ? "+" : ""}{powerDelta} W
+                </span>
+              )}
+              {weightDelta !== undefined && weightDelta !== 0 && (
+                <span className={`text-xs font-mono font-semibold ${weightDelta > 0 ? "text-amber-400" : "text-emerald-400"}`}>
+                  {weightDelta > 0 ? "+" : ""}{weightDelta} g
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -218,7 +253,12 @@ function FixedSlotInfo({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-card border-l border-border shadow-2xl overflow-y-auto">
+    <div className="fixed z-50 bg-card shadow-2xl overflow-y-auto
+      inset-x-0 bottom-0 max-h-[85vh] rounded-t-2xl border-t border-border
+      md:inset-y-0 md:inset-x-auto md:right-0 md:w-full md:max-w-md md:max-h-none md:rounded-none md:border-t-0 md:border-l">
+      <div className="flex justify-center pt-2 pb-0 md:hidden">
+        <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+      </div>
       <div className="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-border px-5 py-4 flex items-center justify-between">
         <div>
           <p className="text-xs text-muted-foreground uppercase tracking-widest">
