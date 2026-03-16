@@ -1,6 +1,8 @@
 # SNP-Customer — TODOS
 _Created: 2026-03-14 (Plan Review) · Updated: 2026-03-15_
 
+> **Phase 1 Status: ✅ COMPLETE** — All 9 TODOs done, test suite passing (51 tests), pushed to GitHub.
+
 ---
 
 ## P1 — Must Have
@@ -69,3 +71,95 @@ _Created: 2026-03-14 (Plan Review) · Updated: 2026-03-15_
 - **Why:** Sales engineers demo on tablets during in-person meetings.
 - **Approach:** Slot panel → bottom sheet on screens < 768px (md breakpoint). Drag handle indicator. Rounded top corners. 85vh max height. SVG viewBox scales naturally. Touch-specific instruction text.
 - **Status:** ✅ Complete
+
+---
+
+## Phase 2 — Enhanced Demo Tool (~2-3 dev-weeks)
+
+### TODO-10: Error Boundary
+- **What:** React error boundary wrapping `/configure` route — catches render crashes, shows "reset config" recovery UI
+- **Why:** Prevents white-screen crashes during demos
+- **Priority:** P1
+
+### TODO-11: PDF Export
+- **What:** Generate branded PDF from configuration summary (`@react-pdf/renderer` or `html2canvas` + `jsPDF`)
+- **Why:** Customers need downloadable docs for procurement. Print CSS works but dedicated PDF is more polished.
+- **Priority:** P1
+
+### TODO-12: Comparison Mode
+- **What:** Side-by-side comparison of 2-3 saved configurations with delta columns for power, weight, interfaces
+- **Why:** Customers evaluating trade-offs across mission profiles
+- **Priority:** P2
+
+### TODO-13: Module Image Assets
+- **What:** Replace solid-color SVG faceplates with actual module photos or detailed technical illustrations
+- **Why:** Visual fidelity for trade shows and customer demos
+- **Depends on:** Asset pipeline from engineering
+- **Priority:** P2
+
+### TODO-14: Accessibility Audit
+- **What:** Full WCAG 2.1 AA pass — keyboard nav for chassis slots, ARIA labels, focus management, screen reader testing
+- **Why:** Compliance and usability for all customers
+- **Priority:** P2
+
+### TODO-15: E2E Tests
+- **What:** Playwright tests for critical flows: wizard → configure → summary → share URL roundtrip
+- **Why:** Catch regressions in user-facing flows
+- **Priority:** P3
+
+---
+
+## Phase 3 — Customer Portal (~4-6 dev-weeks)
+
+### TODO-16: Customer Authentication
+- **What:** OAuth 2.0 / SSO login (Azure AD or Auth0). Per-customer config isolation. JWT sessions.
+- **Depends on:** Auth provider selection
+- **Priority:** P1
+
+### TODO-17: Database Persistence
+- **What:** Replace localStorage with server-side storage (PostgreSQL / Supabase). Configs per customer with timestamps + version history.
+- **Depends on:** Hosting/DB decision
+- **Priority:** P1
+
+### TODO-18: Configuration History
+- **What:** List of saved configs per customer — names, dates, restore, diff between versions
+- **Depends on:** TODO-16, TODO-17
+- **Priority:** P2
+
+### TODO-19: Admin Dashboard
+- **What:** Internal-only view for sales engineers to see all customer configs. Filter by customer, date, config type.
+- **Depends on:** TODO-16, TODO-17 + role-based access
+- **Priority:** P2
+
+### TODO-20: Real-Time AI Knowledge Base
+- **What:** Replace mock AI with RAG pipeline — vector embeddings (Pinecone/pgvector) + OpenAI streaming against sanitized docs
+- **Depends on:** Document ingestion pipeline, embedding model selection
+- **Priority:** P2
+
+---
+
+## Phase 4 — Sales Pipeline Integration (~6-8 dev-weeks)
+
+### TODO-21: Quote Generation
+- **What:** Auto-generate pricing estimates from configuration. PDF quote with terms & conditions.
+- **Depends on:** Pricing data from finance/contracts
+- **Priority:** P1
+
+### TODO-22: CRM Integration
+- **What:** Push configs + contact info to Salesforce/HubSpot as leads. Bidirectional sync.
+- **Depends on:** CRM API access + credentials
+- **Priority:** P1
+
+### TODO-23: RFQ Workflow
+- **What:** Customer submits Request for Quote from summary page. Routes to sales engineer with full config context. Status tracking.
+- **Depends on:** TODO-16, TODO-21
+- **Priority:** P2
+
+### TODO-24: Multi-Chassis Configurations
+- **What:** Configure multiple SNP units for larger deployments. Shared networking topology view.
+- **Priority:** P3
+
+### TODO-25: 3D Visualization
+- **What:** Interactive 3D chassis model (Three.js / React Three Fiber). Rotate, zoom, click slots.
+- **Why:** Higher visual impact for trade shows
+- **Priority:** P3
