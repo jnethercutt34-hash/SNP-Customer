@@ -231,7 +231,7 @@ public/
 13. Fork knowledge base (page + API + document store)
 14. Build sanitized module detail pages
 15. Write TODOS.md + SESSION-CONTEXT.md
-16. Test suite
+16. Test suite ✅ (51 tests — 3 files: product-catalog, config-reducer, url-config)
 
 ---
 
@@ -265,3 +265,58 @@ public/
 | AI returns empty response | "No response" fallback text |
 | Network error (knowledge base) | "Network error" message |
 | Invalid slot/module combination | Slot constraints filter invalid options at data level |
+
+---
+
+## 12. Phase 2+ Roadmap
+
+### Phase 2 — Enhanced Demo Tool (Est. 2-3 weeks)
+
+| Step | Feature | Description | Priority |
+|---|---|---|---|
+| 2.1 | **Error Boundary** | React error boundary wrapping `/configure` route — catches render crashes, shows "reset config" recovery UI instead of white screen | P1 |
+| 2.2 | **PDF Export** | Generate a branded PDF of the configuration summary using `@react-pdf/renderer` or `html2canvas` + `jsPDF`. Include company header, slot breakdown, SWaP-C totals, interface list | P1 |
+| 2.3 | **Comparison Mode** | Side-by-side comparison of 2-3 saved configurations. Store named configs in localStorage. Show delta columns for power, weight, interfaces | P2 |
+| 2.4 | **Module Image Assets** | Replace solid-color SVG faceplates with actual module photos or detailed technical illustrations. Requires asset pipeline from engineering | P2 |
+| 2.5 | **Expanded Module Catalog** | Add new expansion modules as product line grows (e.g., additional networking cards, storage modules, sensor processing cards). Data-only change in `product-catalog.ts` | P2 |
+| 2.6 | **Accessibility Audit** | Full WCAG 2.1 AA pass — keyboard navigation for chassis slots, ARIA labels on interactive SVG, focus management in slide-out panel, screen reader testing | P2 |
+| 2.7 | **E2E Tests** | Playwright tests for critical user flows: wizard → configure → summary → share URL roundtrip | P3 |
+
+### Phase 3 — Customer Portal (Est. 4-6 weeks)
+
+| Step | Feature | Description | Priority |
+|---|---|---|---|
+| 3.1 | **Customer Authentication** | OAuth 2.0 / SSO login (Azure AD or Auth0). Each customer sees only their own configurations. JWT-based session management | P1 |
+| 3.2 | **Database Persistence** | Replace localStorage with server-side storage (PostgreSQL or Supabase). Store configs per customer account with timestamps and version history | P1 |
+| 3.3 | **Configuration History** | List of saved configurations per customer with names, dates, and restore capability. Diff view between versions | P2 |
+| 3.4 | **Admin Dashboard** | Internal-only view for sales engineers to see all customer configs (requires role-based access). Filter by customer, date, config type | P2 |
+| 3.5 | **Real-Time AI Knowledge Base** | Replace mock AI with RAG pipeline against ingested customer-sanitized documents. Vector embedding store (Pinecone/pgvector) + OpenAI streaming | P2 |
+| 3.6 | **Notification System** | Email notifications when a customer saves or shares a configuration. Webhook integration for Slack/Teams alerts to sales team | P3 |
+
+### Phase 4 — Sales Pipeline Integration (Est. 6-8 weeks)
+
+| Step | Feature | Description | Priority |
+|---|---|---|---|
+| 4.1 | **Quote Generation** | Auto-generate pricing estimates from configuration. Requires pricing data feed from contracts/finance. PDF quote with terms & conditions | P1 |
+| 4.2 | **CRM Integration** | Push configurations + contact info to Salesforce/HubSpot as leads/opportunities. Bidirectional sync for status updates | P1 |
+| 4.3 | **RFQ Workflow** | Customer submits Request for Quote directly from summary page. Routes to sales engineer with full config context. Status tracking | P2 |
+| 4.4 | **Multi-Chassis Configurations** | Support configuring multiple SNP units for larger deployments. Shared networking topology view between chassis | P3 |
+| 4.5 | **3D Visualization** | Interactive 3D chassis model (Three.js / React Three Fiber). Rotate, zoom, click slots. Higher visual impact for trade shows and demos | P3 |
+
+### Phase 2+ Dependencies
+
+```
+Phase 2 (demo tool enhancements)
+  └── No external dependencies — can start immediately
+
+Phase 3 (customer portal)
+  ├── Requires: Auth provider selection (Azure AD / Auth0 / Clerk)
+  ├── Requires: Database hosting decision (Supabase / Vercel Postgres / AWS RDS)
+  └── Requires: Deployment infrastructure (Vercel / AWS / Azure)
+
+Phase 4 (sales pipeline)
+  ├── Requires: Phase 3 auth + database
+  ├── Requires: Pricing data from finance/contracts
+  ├── Requires: CRM API access + credentials
+  └── Requires: Legal review of auto-generated quotes
+```
